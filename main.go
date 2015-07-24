@@ -1,11 +1,12 @@
 package main
 
 import (
-	"./fsnotify/"
-	"fmt"
+	// "fmt"
+	"fsnotify"
 	"log"
 	"os"
 	"os/exec"
+	"syscall"
 )
 
 func main() {
@@ -23,17 +24,17 @@ func main() {
 			case ev := <-hostev.Event:
 				log.Println("event:", ev)
 
-				// Define the players
-				cmd := "/usr/bin/killall"
-				arg := []string{"mDNSResponder"}
-
-				// Game on.
-				err := exec.Command(cmd, arg[0]).Start()
-				if err != nil {
-					fmt.Fprintln(os.Stderr, err)
-					os.Exit(1)
+				binary, lookErr := exec.LookPath("sh")
+				if lookErr != nil {
+					panic(lookErr)
 				}
-				fmt.Println("Sucess !")
+				args := []string{"sh", "script.sh"}
+				env := os.Environ()
+
+				execErr := syscall.Exec(binary, args, env)
+				if execErr != nil {
+					panic(execErr)
+				}
 
 			case err := <-hostev.Error:
 				log.Println("error", err)
