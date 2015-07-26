@@ -8,10 +8,13 @@ import (
 	"syscall"
 )
 
+// As of now, main doesn't do anything
+// @todo check user's OS and perform actions based on that
 func main() {
 	Watcher()
 }
 
+// Starts watching specified folder with fsnotify
 func Watcher() {
 
 	hostev, err := fsnotify.NewWatcher()
@@ -42,12 +45,13 @@ func Watcher() {
 
 }
 
+// Perform tasks when a change is detected in the watched directory
 func WatchTasks() {
-	binary, lookErr := exec.LookPath("sh")
+	binary, lookErr := exec.LookPath("sh") // checks the path of the sh executable
 	if lookErr != nil {
 		panic(lookErr)
 	}
-	args := []string{"sh", "script.sh"}
+	args := []string{"sh", "script.sh"} // Name of command must be first argument
 	env := os.Environ()
 
 	execErr := syscall.Exec(binary, args, env)
