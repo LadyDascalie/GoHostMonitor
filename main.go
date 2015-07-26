@@ -8,10 +8,15 @@ import (
 	"syscall"
 )
 
+// As of now, main doesn't do anything
+// @todo check user's OS and perform actions based on that
 func main() {
 	Watcher()
 }
 
+// Watcher starts monitoring the contents of /etc/
+// and responds to any changes made to the content
+// of it's included files
 func Watcher() {
 
 	hostev, err := fsnotify.NewWatcher()
@@ -29,7 +34,7 @@ func Watcher() {
 			select {
 			case ev := <-hostev.Event:
 				log.Println("event:", ev)
-				WatchTasks()
+				WatchTasks() // if a change is detected, run these tasks
 			case err := <-hostev.Error:
 				log.Println("error", err)
 
@@ -42,12 +47,12 @@ func Watcher() {
 
 }
 
-func WatchTasks() {
-	binary, lookErr := exec.LookPath("sh")
+// WatchTasks is called by Watcher a file is modified in the folder it is monitoring 
+	binary, lookErr := exec.LookPath("sh") // checks the path of the sh executable
 	if lookErr != nil {
 		panic(lookErr)
 	}
-	args := []string{"sh", "script.sh"}
+	args := []string{"sh", "script.sh"} // Name of command must be first argument
 	env := os.Environ()
 
 	execErr := syscall.Exec(binary, args, env)
