@@ -47,7 +47,8 @@ func Watcher() {
 
 }
 
-// WatchTasks is called by Watcher a file is modified in the folder it is monitoring 
+// WatchTasks is called by Watcher a file is modified in the folder it is monitoring
+func WatchTasks() {
 	binary, lookErr := exec.LookPath("sh") // checks the path of the sh executable
 	if lookErr != nil {
 		panic(lookErr)
